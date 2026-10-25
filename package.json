@@ -1,0 +1,17 @@
+{
+  "name": "amigo-invisible",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test test/*.test.ts",
+    "start": "node serve.ts",
+    "preview": "node preview.ts",
+    "dev": "wrangler dev",
+    "prueba-envio": "node scripts/prueba-envio.ts",
+    "deploy": "wrangler deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^4.151.1"
+  }
+}
