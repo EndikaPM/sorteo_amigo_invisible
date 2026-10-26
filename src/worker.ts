@@ -3,7 +3,8 @@
 //
 // REGLA DE ORO: el resultado del sorteo NUNCA sale en una respuesta HTTP. Solo viaja por email.
 //
-// Rutas (todas piden la contraseña en la cabecera "Authorization: Bearer <contraseña>"):
+// Rutas (todas piden la contraseña en la cabecera "Authorization: Bearer <contraseña>", y la contraseña
+// viaja codificada con encodeURIComponent para que ñ, tildes y símbolos no se estropeen en la cabecera):
 //   GET  /api/estado               -> años guardados en el historial y si hay un sorteo a medias
 //   POST /api/prueba-envio         -> manda un email de ejemplo a una dirección (para probar el dominio)
 //   POST /api/sortear              -> sortea y envía ("simulacro": true solo comprueba que hay solución)
@@ -457,7 +458,14 @@ export async function manejar(request: Request, env: Env, deps: Dependencias): P
     return responder({ error: "configuracion", mensaje: "El servidor no está configurado correctamente." }, 500);
   }
   const cabecera = request.headers.get("authorization") ?? "";
-  const dada = cabecera.startsWith("Bearer ") ? cabecera.slice(7) : "";
+  const codificada = cabecera.startsWith("Bearer ") ? cabecera.slice(7) : "";
+  let dada = "";
+  try {
+    // Las cabeceras HTTP solo admiten caracteres sencillos: la contraseña llega con encodeURIComponent.
+    dada = decodeURIComponent(codificada);
+  } catch {
+    dada = ""; // mal codificada: no coincide con nada y acaba en 401
+  }
   if (!(await igualConstante(dada, env.APP_PASSWORD))) return responder({ error: "no_autorizado" }, 401);
 
   const faltan = (["RESEND_API_KEY", "REMITENTE", "HISTORIAL"] as const).filter((k) => !env[k]);

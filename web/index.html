@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#282a36">
+<meta name="robots" content="noindex, nofollow">
+<title>Amigo invisible</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="Amigo invisible">
+</head>
+<body>
+<main>
+
+  <!-- Pantalla 1: contraseña -->
+  <div id="pantallaEntrada">
+    <h1>&#128123; Amigo invisible</h1>
+    <p class="sub">Familia Jorge</p>
+    <section>
+      <h2>Entrar</h2>
+      <form id="formEntrada">
+        <label for="clave">Contraseña</label>
+        <input id="clave" type="password" autocomplete="current-password" required>
+        <div id="errorEntrada" class="mensaje error" role="alert" hidden></div>
+        <div class="botones">
+          <button type="submit" class="boton principal" id="entrar">Entrar</button>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <!-- Pantalla 2: el sorteo -->
+  <div id="pantallaSorteo" hidden>
+    <h1>&#128123; Amigo invisible Familia Jorge</h1>
+    <p class="sub">Rellena los datos y haz el sorteo. Nadie verá quién regala a quién, ni tú.</p>
+
+    <div id="pendiente" class="mensaje aviso" hidden>
+      <span id="textoPendiente"></span>
+      <div class="botones">
+        <button type="button" class="boton" id="reintentar">Reintentar los envíos</button>
+        <button type="button" class="boton peligro" id="descartar">Descartar ese sorteo</button>
+      </div>
+    </div>
+
+    <section>
+      <h2>Datos del sorteo</h2>
+      <label for="titulo">Título del email</label>
+      <input id="titulo" type="text" maxlength="80" autocomplete="off">
+      <div class="dos">
+        <div>
+          <label for="presupuesto">Presupuesto</label>
+          <input id="presupuesto" type="text" maxlength="40" placeholder="Ej.: 20 €" autocomplete="off">
+        </div>
+        <div>
+          <label for="fecha">Fecha del intercambio</label>
+          <input id="fecha" type="date">
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Participantes</h2>
+      <div id="lista"></div>
+      <p class="ayuda contador" id="contador"></p>
+      <div class="botones">
+        <button type="button" class="boton" id="anadir">+ Añadir persona</button>
+      </div>
+      <p class="ayuda">Puedes dejar filas vacías o quitar las que sobren: solo cuentan las rellenas.</p>
+    </section>
+
+    <div id="mensaje" class="mensaje" role="alert" hidden></div>
+
+    <div class="botones">
+      <button type="button" class="boton" id="simulacro">Comprobar sin enviar</button>
+      <button type="button" class="boton principal" id="sortear">Sortear y enviar emails</button>
+    </div>
+    <p class="ayuda">«Comprobar sin enviar» solo verifica que se puede repartir sin repetir parejas de los últimos 2 años. No manda nada ni guarda nada.</p>
+    <p class="ayuda"><button type="button" id="cerrar">Cerrar sesión</button></p>
+  </div>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

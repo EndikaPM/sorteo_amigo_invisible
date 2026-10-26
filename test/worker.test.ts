@@ -58,11 +58,13 @@ function montar(anioInicial = 2026) {
 
   async function llamar(
     ruta: string,
-    opc: { metodo?: string; cuerpo?: unknown; textoCrudo?: string; password?: string | null } = {}
+    opc: { metodo?: string; cuerpo?: unknown; textoCrudo?: string; password?: string | null; autorizacion?: string } = {}
   ) {
-    const { metodo = "POST", cuerpo, textoCrudo, password = PASSWORD } = opc;
+    const { metodo = "POST", cuerpo, textoCrudo, password = PASSWORD, autorizacion } = opc;
     const cabeceras: Record<string, string> = { "content-type": "application/json" };
-    if (password !== null) cabeceras.authorization = `Bearer ${password}`;
+    // Igual que hacen la página y el script: la contraseña viaja con encodeURIComponent.
+    if (autorizacion !== undefined) cabeceras.authorization = autorizacion;
+    else if (password !== null) cabeceras.authorization = `Bearer ${encodeURIComponent(password)}`;
     const request = new Request(`https://amigo.ejemplo.com${ruta}`, {
       method: metodo,
       headers: cabeceras,
@@ -388,4 +390,20 @@ test("prueba de envío con el dominio sin verificar: cuenta el motivo", async ()
   assert.equal(r.status, 502);
   assert.match(r.json.mensaje, /not verified/);
   assert.equal(t.envios.length, 1, "un 403 no se reintenta");
+});
+
+test("la contraseña puede llevar ñ, tildes, símbolos y espacios (viaja codificada)", async () => {
+  const t = montar();
+  const clave = "Contraseña ñandú 100% #segura €";
+  t.env.APP_PASSWORD = clave;
+  assert.equal((await t.llamar("/api/estado", { metodo: "GET", password: clave })).status, 200);
+  assert.equal((await t.llamar("/api/estado", { metodo: "GET", password: "Contrasena nandu 100% #segura E" })).status, 401);
+});
+
+test("una cabecera de autorización mal formada da 401, no un error del servidor", async () => {
+  const t = montar();
+  for (const raro of ["Bearer %E0%A4%A", "Bearer %", "Basic abc", "Bearer ", ""]) {
+    const r = await t.llamar("/api/estado", { metodo: "GET", autorizacion: raro });
+    assert.equal(r.status, 401, `«${raro}»`);
+  }
 });

@@ -5,9 +5,368 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>Amigo invisible</title>
+<style>
+  :root {
+    --rojo: #b91c1c;
+    --fondo: #f3f4f6;
+    --tarjeta: #ffffff;
+    --campo: #ffffff;
+    --texto: #111827;
+    --gris: #6b7280;
+    --borde: #d1d5db;
+    --aviso-fondo: #fef3c7;
+    --aviso-borde: #f59e0b;
+    --error-fondo: #fee2e2;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --fondo: #111827;
+      --tarjeta: #1f2937;
+      --campo: #111827;
+      --texto: #f3f4f6;
+      --gris: #9ca3af;
+      --borde: #374151;
+      --aviso-fondo: #422006;
+      --aviso-borde: #b45309;
+      --error-fondo: #450a0a;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--fondo);
+    color: var(--texto);
+  }
+  main { max-width: 640px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 26px; margin: 8px 0 4px; }
+  h2 { font-size: 17px; margin: 0 0 12px; }
+  h3 { font-size: 15px; margin: 20px 0 6px; }
+  .sub { color: var(--gris); margin: 0 0 12px; font-size: 15px; }
+  .aviso {
+    background: var(--aviso-fondo);
+    border: 1px solid var(--aviso-borde);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 14px;
+    margin: 12px 0;
+  }
+  section {
+    background: var(--tarjeta);
+    border-radius: 12px;
+    padding: 16px;
+    margin: 12px 0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  }
+  label { display: block; font-size: 14px; color: var(--gris); margin: 12px 0 4px; }
+  label:first-of-type { margin-top: 0; }
+  input, textarea, select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 16px; /* 16px evita el zoom automático en iPhone */
+    font-family: inherit;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    background: var(--campo);
+    color: var(--texto);
+  }
+  textarea { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; }
+  .persona {
+    display: grid;
+    grid-template-columns: 1fr 44px;
+    grid-template-areas: "n x" "e x";
+    gap: 6px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--borde);
+  }
+  .persona .nombre { grid-area: n; }
+  .persona .email { grid-area: e; }
+  .persona .quitar {
+    grid-area: x;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--gris);
+    font-size: 18px;
+    cursor: pointer;
+  }
+  .ayuda { color: var(--gris); font-size: 13px; margin: 8px 0 0; }
+  .botones { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  button.boton {
+    padding: 11px 16px;
+    font-size: 16px;
+    font-family: inherit;
+    border-radius: 8px;
+    border: 1px solid var(--borde);
+    background: transparent;
+    color: var(--texto);
+    cursor: pointer;
+  }
+  button.principal {
+    background: var(--rojo);
+    border-color: var(--rojo);
+    color: #fff;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .error {
+    background: var(--error-fondo);
+    border: 1px solid var(--rojo);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin: 12px 0;
+    white-space: pre-line;
+    font-size: 14px;
+  }
+  details summary { cursor: pointer; font-size: 15px; }
+  ul#resultado { padding-left: 20px; margin: 8px 0; line-height: 1.7; }
+  iframe {
+    width: 100%;
+    height: 560px;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    background: #fff;
+    margin-top: 8px;
+  }
+  [hidden] { display: none !important; }
+</style>
 </head>
-<body style="font-family: system-ui, sans-serif; max-width: 32rem; margin: 2rem auto; padding: 0 1rem;">
-<h1>&#127873; Amigo invisible</h1>
-<p>El servidor está en marcha. La pantalla del sorteo llega en el siguiente paso.</p>
+<body>
+<main>
+  <h1>&#128123; Amigo invisible Familia Jorge &#128123;</h1>
+  <p class="sub">Rellena los datos y haz el sorteo.</p>
+
+  <div class="aviso">
+    <strong>Modo prueba.</strong> Aquí no se envía ningún email y el resultado se muestra en pantalla
+    para que puedas comprobar que todo funciona. En la versión final el resultado no se mostrará.
+  </div>
+
+  <section>
+    <h2>Datos del sorteo</h2>
+    <label for="titulo">Título del email</label>
+    <input id="titulo" type="text" autocomplete="off">
+    <label for="presupuesto">Presupuesto (opcional)</label>
+    <input id="presupuesto" type="text" placeholder="Ej.: 20 €" autocomplete="off">
+    <label for="fecha">Fecha del intercambio (opcional)</label>
+    <input id="fecha" type="date" autocomplete="off">
+  </section>
+
+  <section>
+    <h2>Participantes</h2>
+    <div id="lista"></div>
+    <p class="ayuda" id="contador"></p>
+    <div class="botones">
+      <button type="button" class="boton" id="anadir">+ Añadir persona</button>
+      <button type="button" class="boton" id="ejemplo">Rellenar con datos de ejemplo</button>
+    </div>
+  </section>
+
+  <section>
+    <details>
+      <summary>Historial de años anteriores (para probar)</summary>
+      <p class="ayuda">
+        Pega aquí el historial que te dio la prueba anterior para comprobar que no se repiten parejas.
+        Está ordenado del más reciente al más antiguo; solo se usan los 2 primeros años.
+        En la versión final esto se guardará solo, sin que lo veas.
+      </p>
+      <textarea id="historial" rows="6" spellcheck="false" placeholder='[ { "ana@ejemplo.com": "beto@ejemplo.com" } ]'></textarea>
+    </details>
+  </section>
+
+  <div id="error" class="error" role="alert" hidden></div>
+  <button type="button" class="boton principal" id="sortear">Hacer sorteo (prueba)</button>
+
+  <section id="salida" hidden>
+    <h2>Resultado de la prueba</h2>
+    <ul id="resultado"></ul>
+
+    <h3>Historial actualizado</h3>
+    <p class="ayuda">Cópialo y pégalo en el recuadro de historial para probar el "año siguiente".</p>
+    <textarea id="nuevoHistorial" rows="8" readonly spellcheck="false"></textarea>
+
+    <h3>Así verá el email cada persona</h3>
+    <label for="verComo">Ver el email de</label>
+    <select id="verComo"></select>
+    <p class="ayuda" id="asunto"></p>
+    <iframe id="vista" title="Vista previa del email" sandbox></iframe>
+  </section>
+</main>
+
+<script type="module">
+  import { sortear, actualizarHistorial } from "/src/sorteo.js";
+  import { generarEmail } from "/src/email.js";
+  import { proximosReyes, formatoFecha, aISO, desdeISO } from "/src/fechas.js";
+
+  const $ = (id) => document.getElementById(id);
+  const lista = $("lista");
+  const REGEX_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const EJEMPLO = ["Ana", "Beto", "Carla", "Dani", "Eva", "Fran", "Gema", "Hugo"];
+
+  // Valores por defecto
+  $("titulo").value = `Amigo invisible ${new Date().getFullYear()}`;
+  $("fecha").value = aISO(proximosReyes());
+
+  function contarRellenas() {
+    let n = 0;
+    lista.querySelectorAll(".persona").forEach((fila) => {
+      if (fila.querySelector(".nombre").value.trim() || fila.querySelector(".email").value.trim()) n++;
+    });
+    return n;
+  }
+
+  function actualizarContador() {
+    const n = contarRellenas();
+    $("contador").textContent = `${n} participante${n === 1 ? "" : "s"} (las filas vacías se ignoran)`;
+  }
+
+  function nuevaFila(nombre = "", email = "") {
+    const fila = document.createElement("div");
+    fila.className = "persona";
+
+    const n = document.createElement("input");
+    n.type = "text";
+    n.className = "nombre";
+    n.placeholder = "Nombre";
+    n.value = nombre;
+    n.autocomplete = "off";
+    n.setAttribute("aria-label", "Nombre");
+
+    const e = document.createElement("input");
+    e.type = "email";
+    e.className = "email";
+    e.placeholder = "Email";
+    e.value = email;
+    e.inputMode = "email";
+    e.autocapitalize = "none";
+    e.autocomplete = "off";
+    e.setAttribute("aria-label", "Email");
+
+    const x = document.createElement("button");
+    x.type = "button";
+    x.className = "quitar";
+    x.textContent = "✕";
+    x.setAttribute("aria-label", "Quitar persona");
+    x.addEventListener("click", () => {
+      fila.remove();
+      actualizarContador();
+    });
+
+    fila.append(n, e, x);
+    lista.append(fila);
+    return fila;
+  }
+
+  lista.addEventListener("input", actualizarContador);
+
+  // Arrancamos con 8 filas vacías (lo habitual)
+  for (let i = 0; i < 8; i++) nuevaFila();
+  actualizarContador();
+
+  $("anadir").addEventListener("click", () => {
+    const fila = nuevaFila();
+    fila.querySelector(".nombre").focus();
+    actualizarContador();
+  });
+
+  $("ejemplo").addEventListener("click", () => {
+    lista.replaceChildren();
+    for (const nombre of EJEMPLO) nuevaFila(nombre, `${nombre.toLowerCase()}@ejemplo.com`);
+    $("presupuesto").value = "20 €";
+    actualizarContador();
+  });
+
+  function leerPersonas() {
+    const personas = [];
+    const errores = [];
+    lista.querySelectorAll(".persona").forEach((fila, i) => {
+      const nombre = fila.querySelector(".nombre").value.trim();
+      const email = fila.querySelector(".email").value.trim();
+      if (!nombre && !email) return; // fila vacía: se ignora
+      if (!nombre) errores.push(`Fila ${i + 1}: falta el nombre.`);
+      else if (!REGEX_EMAIL.test(email)) errores.push(`Fila ${i + 1} (${nombre}): el email no es válido.`);
+      else personas.push({ nombre, email });
+    });
+    return { personas, errores };
+  }
+
+  function mostrarError(texto) {
+    $("error").textContent = texto;
+    $("error").hidden = false;
+    $("salida").hidden = true;
+    $("error").scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+
+  function mostrarResultado(personas, resultado, historial) {
+    const clave = (p) => p.email.trim().toLowerCase();
+    const porEmail = new Map(personas.map((p) => [clave(p), p]));
+    const receptorDe = (p) => porEmail.get(resultado[clave(p)]);
+
+    const ul = $("resultado");
+    ul.replaceChildren();
+    for (const p of personas) {
+      const li = document.createElement("li");
+      li.textContent = `${p.nombre} → ${receptorDe(p).nombre}`;
+      ul.append(li);
+    }
+
+    $("nuevoHistorial").value = JSON.stringify(actualizarHistorial(historial.slice(0, 2), resultado), null, 2);
+
+    const sel = $("verComo");
+    sel.replaceChildren();
+    personas.forEach((p, i) => {
+      const o = document.createElement("option");
+      o.value = String(i);
+      o.textContent = p.nombre;
+      sel.append(o);
+    });
+
+    const pintar = () => {
+      const p = personas[Number(sel.value)];
+      const email = generarEmail({
+        nombreDador: p.nombre,
+        nombreReceptor: receptorDe(p).nombre,
+        emailReceptor: receptorDe(p).email,
+        titulo: $("titulo").value.trim() || undefined,
+        presupuesto: $("presupuesto").value.trim() || undefined,
+        fecha: $("fecha").value ? formatoFecha(desdeISO($("fecha").value)) : undefined,
+      });
+      $("asunto").textContent = `Asunto: ${email.asunto}`;
+      $("vista").srcdoc = email.html;
+    };
+    sel.onchange = pintar;
+    pintar();
+
+    $("salida").hidden = false;
+    $("salida").scrollIntoView({ behavior: "smooth" });
+  }
+
+  $("sortear").addEventListener("click", () => {
+    $("error").hidden = true;
+
+    const { personas, errores } = leerPersonas();
+    if (errores.length) return mostrarError(errores.join("\n"));
+    if (personas.length < 2) return mostrarError("Hacen falta al menos 2 participantes.");
+
+    let historial = [];
+    const textoHistorial = $("historial").value.trim();
+    if (textoHistorial) {
+      try {
+        historial = JSON.parse(textoHistorial);
+        if (!Array.isArray(historial)) throw new Error("no es una lista");
+      } catch {
+        return mostrarError('El historial no es válido. Debe ser una lista, por ejemplo: [ { "ana@ejemplo.com": "beto@ejemplo.com" } ]');
+      }
+    }
+
+    let resultado;
+    try {
+      resultado = sortear(personas, { historial: historial.slice(0, 2) });
+    } catch (err) {
+      return mostrarError(err.message);
+    }
+    mostrarResultado(personas, resultado, historial);
+  });
+</script>
 </body>
 </html>

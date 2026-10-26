@@ -2,6 +2,8 @@
 name = "amigo-invisible"
 main = "src/worker.ts"
 compatibility_date = "2025-09-01"
+workers_dev = false
+routes = [{ pattern = "sorteo.amigoinvisiblefamiliajorge.com", custom_domain = true }]
 
 # La web (carpeta "web") se sirve gratis; solo las rutas /api/* pasan por el código del servidor.
 [assets]
@@ -12,7 +14,7 @@ run_worker_first = ["/api/*"]
 #   npx wrangler kv namespace create HISTORIAL
 [[kv_namespaces]]
 binding = "HISTORIAL"
-id = "PON_AQUI_EL_ID_DE_KV"
+id = "967d4b22d28d4ddf81b5926adbe8c1f0"
 
 [vars]
 # Quién aparece como remitente. El dominio debe estar verificado en Resend.

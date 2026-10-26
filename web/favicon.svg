@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+  <rect width="180" height="180" fill="#282a36"/>
+  <g transform="translate(0,-6)">
+    <path d="M50 148V82A40 40 0 0 1 130 82V148L116.7 134L103.3 148L90 134L76.7 148L63.3 134Z" fill="#bd93f9"/>
+    <circle cx="74" cy="82" r="7.5" fill="#282a36"/>
+    <circle cx="106" cy="82" r="7.5" fill="#282a36"/>
+    <ellipse cx="90" cy="103" rx="6" ry="8" fill="#ff79c6"/>
+  </g>
+</svg>
