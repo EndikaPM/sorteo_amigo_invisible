@@ -35,7 +35,7 @@ export function generarEmail(d: DatosEmail): EmailGenerado {
   const titulo = d.titulo ?? "Amigo invisible";
   const dador = escapar(d.nombreDador);
   const receptor = escapar(d.nombreReceptor);
-  const emailReceptor = d.emailReceptor ? escapar(d.emailReceptor) : "";  
+  const emailReceptor = d.emailReceptor ? escapar(d.emailReceptor) : "";
 
   const filasDetalle: string[] = [];
   if (d.presupuesto) {
