@@ -4,10 +4,10 @@ const MAX_PERSONAS = 30;
 
 // --- Contraseña: solo en memoria (y en la sesión de la pestaña, si el navegador lo permite) ---
 let clave = "";
-try { clave = sessionStorage.getItem("clave") ?? ""; } catch {}
+try { clave = sessionStorage.getItem("clave") ?? ""; } catch { }
 function guardarClave(v) {
   clave = v;
-  try { v ? sessionStorage.setItem("clave", v) : sessionStorage.removeItem("clave"); } catch {}
+  try { v ? sessionStorage.setItem("clave", v) : sessionStorage.removeItem("clave"); } catch { }
 }
 
 // --- Llamadas al servidor ---
@@ -186,7 +186,7 @@ async function lanzar(simulacro, forzar = false) {
   if (errores.length) return mostrar("error", errores.join("\n"));
 
   if (!simulacro && !forzar &&
-      !confirm(`Se va a sortear y enviar ${personas.length} emails. No se puede deshacer. ¿Seguro?`)) return;
+    !confirm(`Se va a sortear y enviar ${personas.length} emails. No se puede deshacer. ¿Seguro?`)) return;
 
   bloquear(true);
   const { estado, datos } = await api("/api/sortear", "POST", datosFormulario(personas, { simulacro, forzar }));
@@ -237,3 +237,20 @@ $("fecha").value = aISO(proximosReyes());
 for (let i = 0; i < 8; i++) nuevaFila();
 actualizarContador();
 if (clave) abrirSorteo(); else $("clave").focus();
+
+const ojo = document.getElementById("clave");
+const mostrarClave = document.getElementById("mostrarClave");
+
+mostrarClave.addEventListener("click", () => {
+  if (ojo.type === "password") {
+    ojo.type = "text";
+    mostrarClave.textContent = "🙈";
+    mostrarClave.setAttribute("aria-label", "Ocultar contraseña");
+    mostrarClave.title = "Ocultar contraseña";
+  } else {
+    ojo.type = "password";
+    mostrarClave.textContent = "👁️";
+    mostrarClave.setAttribute("aria-label", "Mostrar contraseña");
+    mostrarClave.title = "Mostrar contraseña";
+  }
+});

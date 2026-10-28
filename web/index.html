@@ -25,8 +25,11 @@
     <section>
       <h2>Entrar</h2>
       <form id="formEntrada">
-        <label for="clave">Contraseña</label>
-        <input id="clave" type="password" autocomplete="current-password" required>
+        <div class="campo-clave">
+          <label for="clave">Contraseña</label>
+          <input id="clave" type="password" autocomplete="current-password" required>
+          <button type="button" id="mostrarClave" aria-label="Mostrar contraseña" title="Mostrar contraseña">👁️</button>
+        </div>
         <div id="errorEntrada" class="mensaje error" role="alert" hidden></div>
         <div class="botones">
           <button type="submit" class="boton principal" id="entrar">Entrar</button>

@@ -267,3 +267,22 @@ button:disabled {
 [hidden] {
   display: none !important;
 }
+
+.campo-clave {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.campo-clave input {
+    flex: 1;
+    min-width: 0;
+}
+
+#mostrarClave {
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    padding: 5px;
+}
